@@ -15,7 +15,9 @@ public class SpaceshipControls : MonoBehaviour {
     public float screenBottom;
     public float screenLeft;
     public float screenRight;
-    
+    public float bulletForce;
+
+    public GameObject bullet;
 
 	// Use this for initialization
 	void Start () {
@@ -30,6 +32,20 @@ public class SpaceshipControls : MonoBehaviour {
         //Vector2 moveVec = new Vector2(CrossPlatformInputManager.GetAxis("Horizontal") * thrust, CrossPlatformInputManager.GetAxis("Vertical") );
         thrustInput = Input.GetAxis("Vertical")*-1;
         turnInput = Input.GetAxis("Horizontal")*-1;
+
+        //Check for input from the fire key and make bullets
+        if(Input.GetButtonDown("Fire1"))
+        {
+           GameObject newBullet = Instantiate(bullet, transform.position, transform.rotation);
+            newBullet.GetComponent<Rigidbody2D>().AddRelativeForce(Vector2.down * bulletForce);
+            Destroy(newBullet, 3.0f);
+        }
+
+        //rotate the ship
+
+        transform.Rotate(Vector3.forward * turnInput * Time.deltaTime * -turnThrust);
+
+
 
         //Screen Wrapping
 
@@ -62,5 +78,9 @@ public class SpaceshipControls : MonoBehaviour {
         rb.AddTorque(turnInput);
         
         
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Destroy(other.gameObject);
     }
 }
